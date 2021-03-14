@@ -1,7 +1,6 @@
 import { Layout, Menu } from "antd";
 import {
   HeartOutlined,
-  MenuFoldOutlined,
   PlayCircleOutlined,
   UserOutlined,
 } from "@ant-design/icons";
