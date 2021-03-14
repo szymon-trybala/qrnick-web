@@ -5,10 +5,13 @@ import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { AuthContainer, AuthContent, AuthFooter, AuthLayout } from "./styles";
 import { useHistory } from "react-router";
 import { routes } from "../../core/router/routes";
+import { useAppDispatch } from "../../core/store/hooks";
+import { login } from "../../core/store/slices/auth/authSlice";
 
 const Register: React.FC = () => {
   const [form] = Form.useForm<RegisterDto>();
   const history = useHistory();
+  const dispatch = useAppDispatch();
 
   const submitButtonLayout = {
     wrapperCol: {
@@ -20,6 +23,8 @@ const Register: React.FC = () => {
     authService
       .register(data)
       .then((user) => {
+        dispatch(login(user));
+        localStorage.setItem("token", user.token);
         notification.success({
           message: `Zarejestrowano się. Witaj, ${user.login}`,
         });
@@ -93,7 +98,9 @@ const Register: React.FC = () => {
           </Form>
         </AuthContent>
       </AuthContainer>
-      <AuthFooter>Qrnick ©2021 Christ & Kazior & Loniek & Treffon & Trybała</AuthFooter>
+      <AuthFooter>
+        Qrnick ©2021 Christ & Kazior & Loniek & Treffon & Trybała
+      </AuthFooter>
     </AuthLayout>
   );
 };

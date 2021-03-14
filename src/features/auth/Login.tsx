@@ -9,13 +9,15 @@ import {
   AuthLayout,
   AuthRegisterInfo,
 } from "./styles";
-import { set } from "../../core/store/slices/auth/authSlice";
+import { login } from "../../core/store/slices/auth/authSlice";
 import { Link, useHistory } from "react-router-dom";
 import { routes } from "../../core/router/routes";
+import { useAppDispatch } from "../../core/store/hooks";
 
 const Login: React.FC = () => {
   const [form] = Form.useForm<LoginDto>();
   const history = useHistory();
+  const dispatch = useAppDispatch();
 
   const submitButtonLayout = {
     wrapperCol: {
@@ -27,7 +29,7 @@ const Login: React.FC = () => {
     authService
       .login(data)
       .then((user) => {
-        set(user);
+        dispatch(login(user))
         localStorage.setItem("token", user.token);
         notification.success({
           message: `Zalogowano się. Witaj, ${user.login}`,

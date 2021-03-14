@@ -1,4 +1,4 @@
-import { Layout, Menu } from "antd";
+import { Layout, Menu, notification } from "antd";
 import {
   HeartOutlined,
   PlayCircleOutlined,
@@ -16,9 +16,16 @@ import {
   TriggerMenuFoldOutlined,
   TriggerMenuUnfoldOutlined,
 } from "./styles";
+import { useAppDispatch, useAppSelector } from "../../core/store/hooks";
+import { logout } from "../../core/store/slices/auth/authSlice";
+import { routes } from "../../core/router/routes";
+import { useHistory } from "react-router";
 
 const MainLayout: React.FC = ({ children }) => {
   const [siderCollapsed, setSiderCollapsed] = useState(false);
+  const auth = useAppSelector((state) => state.auth);
+  const dispatch = useAppDispatch();
+  const history = useHistory();
 
   const toggleSider = () => {
     setSiderCollapsed(!siderCollapsed);
@@ -28,6 +35,15 @@ const MainLayout: React.FC = ({ children }) => {
     if (siderCollapsed)
       return <TriggerMenuUnfoldOutlined onClick={toggleSider} />;
     else return <TriggerMenuFoldOutlined onClick={toggleSider} />;
+  };
+
+  const handleLogout = () => {
+    dispatch(logout());
+    localStorage.removeItem("token");
+    notification.success({
+      message: `Wylogowano`,
+    });
+    history.push(routes.login);
   };
 
   return (
@@ -41,9 +57,16 @@ const MainLayout: React.FC = ({ children }) => {
           <Menu.Item key="2" icon={<HeartOutlined />}>
             Ulubione
           </Menu.Item>
-          <Menu.Item key="3" icon={<UserOutlined />}>
-            Konto
-          </Menu.Item>
+          <Menu.SubMenu
+            key="sub1"
+            icon={<UserOutlined />}
+            title={auth.login || "Konto"}
+          >
+            <Menu.Item key="3">Ustawienia</Menu.Item>
+            <Menu.Item key="4" onClick={handleLogout}>
+              Wyloguj
+            </Menu.Item>
+          </Menu.SubMenu>
         </Menu>
       </HamburgerSider>
       <Layout>

@@ -27,8 +27,7 @@ async function login(loginDto: LoginDto): Promise<UserDto> {
   } else if (!response.ok) {
     return Promise.reject(new Error("Błąd serwera"));
   }
-  const body = await response.json();
-  return body;
+  return (await response.json()) as UserDto;
 }
 
 async function register(registerDto: RegisterDto): Promise<UserDto> {
@@ -44,8 +43,7 @@ async function register(registerDto: RegisterDto): Promise<UserDto> {
   if (!response.ok) {
     return Promise.reject(new Error("Błąd serwera"));
   }
-  const body = await response.json();
-  return body;
+  return (await response.json()) as UserDto;
 }
 
 export const authService = {

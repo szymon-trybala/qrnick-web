@@ -1,11 +1,10 @@
 import { Card, Col, Row } from "antd";
 import React from "react";
-import { useSelector } from "react-redux";
 import MainLayout from "../../common/mainLayout/MainLayout";
-import { RootState } from "../../core/store/rootReducer";
+import { useAppSelector } from "../../core/store/hooks";
 
 const GamesList: React.FC = () => {
-  const games = useSelector((state: RootState) => state.gamesList);
+  const games = useAppSelector((state) => state.gamesList);
 
   return (
     <MainLayout>

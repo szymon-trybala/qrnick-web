@@ -30,16 +30,16 @@ const gamesListSlice = createSlice({
   name: "gamesList",
   initialState,
   reducers: {
-    add(state, action: PayloadAction<Game>) {
+    addGame(state, action: PayloadAction<Game>) {
       state.push(action.payload);
     },
-    set(state, action: PayloadAction<Game[]>) {
+    setGames(state, action: PayloadAction<Game[]>) {
       return action.payload;
     },
   },
 });
 
-export const { add, set } = gamesListSlice.actions;
+export const { addGame, setGames } = gamesListSlice.actions;
 
 export const refreshGamesList = (): AppThunk => async (
   dispatch: AppDispatch

@@ -1,10 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import jwtDecode, { JwtPayload } from "jwt-decode";
-import { authService, LoginDto } from "../../../api/authService";
-import { AppDispatch, AppThunk } from "../../store";
+import jwtDecode from "jwt-decode";
 import { Auth } from "./types";
 
-const emptyToken: Auth = {
+const emptyState: Auth = {
   login: undefined,
   token: undefined,
 };
@@ -12,17 +10,17 @@ const emptyToken: Auth = {
 function getInitialAuthStateFromLocalStorate(): Auth {
   try {
     const token = localStorage.getItem("token");
-    if (!token) return emptyToken;
+    if (!token) return emptyState;
 
-    const decoded = jwtDecode<JwtPayload>(token);
-    if (!decoded) return emptyToken;
+    const decoded = jwtDecode<any>(token);
+    if (!decoded) return emptyState;
 
     return {
-      login: decoded.sub,
+      login: decoded.unique_name,
       token: token,
     };
   } catch (error) {
-    return emptyToken;
+    return emptyState;
   }
 }
 
@@ -30,21 +28,13 @@ const authSlice = createSlice({
   name: "auth",
   initialState: getInitialAuthStateFromLocalStorate(),
   reducers: {
-    set(state, action: PayloadAction<Auth>) {
+    login(state, action: PayloadAction<Auth>) {
       return action.payload;
     },
+    logout: (state) => emptyState,
   },
 });
 
-export const { set } = authSlice.actions;
-
-export const login = (loginDto: LoginDto): AppThunk => async (
-  dispatch: AppDispatch
-) => {
-  authService.login(loginDto).then((user) => {
-    dispatch(authSlice.actions.set(user));
-    localStorage.setItem("token", user.token);
-  });
-};
+export const { login, logout } = authSlice.actions;
 
 export default authSlice.reducer;
