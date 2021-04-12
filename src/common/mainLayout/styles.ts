@@ -1,4 +1,4 @@
-import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
+import { HomeOutlined } from "@ant-design/icons";
 import { Layout } from "antd";
 import styled from "styled-components";
 
@@ -14,7 +14,8 @@ export const HamburgerSider = styled(Layout.Sider).attrs({
 
 export const SiteLogo = styled.div`
   height: 32px;
-  background: rgba(255, 255, 255, 0.6);
+  width: 160px;
+  background-color: rgba(251, 12, 66, 0.5);
   margin: 16px;
 `;
 
@@ -23,18 +24,10 @@ export const SiteHeader = styled(Layout.Header)`
   background: #fff;
 `;
 
-export const TriggerMenuUnfoldOutlined = styled(MenuUnfoldOutlined)`
+export const HomeButton = styled(HomeOutlined)`
   font-size: 18px;
   line-height: 64px;
-  padding: 0 24px;
-  cursor: pointer;
-  transition: color 0.5s;
-`;
-
-export const TriggerMenuFoldOutlined = styled(MenuFoldOutlined)`
-  font-size: 18px;
-  line-height: 64px;
-  padding: 0 24px;
+  padding: 0 8px;
   cursor: pointer;
   transition: color 0.5s;
 `;

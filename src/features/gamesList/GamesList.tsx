@@ -1,23 +1,53 @@
 import { Card, Col, Row } from "antd";
-import React from "react";
+import React, { useEffect } from "react";
+import { Link } from "react-router-dom";
+import GamesListEmptyFeedback from "../../common/feedbacks/GamesListEmptyFeedback";
+import GamesListErrorFeedback from "../../common/feedbacks/GamesListErrorFeedback";
 import MainLayout from "../../common/mainLayout/MainLayout";
-import { useAppSelector } from "../../core/store/hooks";
+import LoadingGamesSkeleton from "../../common/skeletons/LoadingGamesSkeleton";
+import { gamesService } from "../../core/api/gamesService";
+import { useAppDispatch, useAppSelector } from "../../core/store/hooks";
 
 const GamesList: React.FC = () => {
-  const games = useAppSelector((state) => state.gamesList);
+  const dispatch = useAppDispatch();
+  const gamesState = useAppSelector((state) => state.gamesList);
+
+  useEffect(() => {
+    dispatch(gamesService.fetchGamesList());
+  }, [dispatch]);
 
   return (
     <MainLayout>
-      <Row gutter={16}>
-        {games &&
-          games.map((g) => (
-            <Col span={8}>
-              <Card title={g.name} bordered hoverable>
-                TODO: Miniaturka + przycisk uruchomienia
-              </Card>
+      {gamesState.promise === "pending" && <LoadingGamesSkeleton />}
+      {gamesState.promise === "error" && <GamesListErrorFeedback />}
+      {gamesState.promise === "fulfilled" && gamesState.games.length === 0 && (
+        <GamesListEmptyFeedback />
+      )}
+      {gamesState.promise === "fulfilled" && gamesState.games.length > 0 && (
+        <Row gutter={16}>
+          {gamesState.games.map((g, i) => (
+            <Col key={i} xs={24} xl={8}>
+              <Link to={`game/${g.gameId}`}>
+                <Card
+                  cover={
+                    <img
+                      alt="example"
+                      src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
+                    />
+                  }
+                  bordered
+                  hoverable
+                >
+                  <Card.Meta
+                    title={`${g.name} ${g.version}`}
+                    description={g.description}
+                  />
+                </Card>
+              </Link>
             </Col>
           ))}
-      </Row>
+        </Row>
+      )}
     </MainLayout>
   );
 };
