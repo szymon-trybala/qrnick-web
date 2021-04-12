@@ -1,5 +1,5 @@
 import { Button, Col, Row, Spin } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import MainLayout from "../../common/mainLayout/MainLayout";
 import Unity, { UnityContext } from "react-unity-webgl";
 import { useParams } from "react-router";
@@ -53,16 +53,10 @@ const GameView: React.FC = () => {
     unityContext.setFullscreen(true);
   };
 
-  useEffect(() => {
-    return () => {
-      unityContext.quitUnityInstance();
-    };
-  }, []);
-
   return (
     <MainLayout>
       {!loadingState.loaded && !loadingState.error && (
-        <Spin style={{display: "block", position: "fixed", zIndex: 1031, top: "50%", right: "50%"}} size="large" tip={`Ładowanie... ${loadingState.progress}%`} />
+        <Spin size="large" tip={`Ładowanie... ${loadingState.progress}%`} />
       )}
       {loadingState.error && (
         <GameLoadingErrorFeedback message={loadingState.errorMessage} />
