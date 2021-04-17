@@ -1,5 +1,5 @@
 import { Button, Col, Row, Spin } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import MainLayout from "../../common/mainLayout/MainLayout";
 import Unity, { UnityContext } from "react-unity-webgl";
 import { useParams } from "react-router";
@@ -25,12 +25,18 @@ const GameView: React.FC = () => {
   });
   const { gameId } = useParams<GameViewUrlProps>();
 
-  const unityContext = new UnityContext({
+  let unityContext = new UnityContext({
     loaderUrl: `UnityLoaderFile?gameId=${gameId}`,
     dataUrl: `UnityDataFile?gameId=${gameId}`,
     frameworkUrl: `UnityFrameworkFile?gameId=${gameId}`,
     codeUrl: `UnityWasmFile?gameId=${gameId}`,
   });
+
+  useEffect(() => {
+    return () => {
+      unityContext.quitUnityInstance();
+    };
+  }, []);
 
   unityContext.on("progress", (progression: number) => {
     setLoadingState({ ...loadingState, progress: progression * 100 });
