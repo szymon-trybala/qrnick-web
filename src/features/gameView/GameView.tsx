@@ -4,6 +4,13 @@ import MainLayout from "../../common/mainLayout/MainLayout";
 import Unity, { UnityContext } from "react-unity-webgl";
 import { useParams } from "react-router";
 import GameLoadingErrorFeedback from "../../common/feedbacks/GameLoadingErrorFeedback";
+import { isMobileSafari, isMobile } from "react-device-detect";
+import { FullScreen, useFullScreenHandle } from "react-full-screen";
+import {
+  unityContextDefaultStyles,
+  unityContextFullScreenStyles,
+} from "./gameViewConsts";
+import packageJson from "../../../package.json";
 
 interface GameViewUrlProps {
   gameId: string;
@@ -24,12 +31,12 @@ const GameView: React.FC = () => {
     errorMessage: undefined,
   });
   const { gameId } = useParams<GameViewUrlProps>();
-
-  let unityContext = new UnityContext({
-    loaderUrl: `UnityLoaderFile?gameId=${gameId}`,
-    dataUrl: `UnityDataFile?gameId=${gameId}`,
-    frameworkUrl: `UnityFrameworkFile?gameId=${gameId}`,
-    codeUrl: `UnityWasmFile?gameId=${gameId}`,
+  const handle = useFullScreenHandle();
+  const unityContext = new UnityContext({
+    loaderUrl: `${packageJson.proxy}game/UnityLoaderFile?gameId=${gameId}`,
+    dataUrl: `${packageJson.proxy}game/UnityDataFile?gameId=${gameId}`,
+    frameworkUrl: `${packageJson.proxy}game/UnityFrameworkFile?gameId=${gameId}`,
+    codeUrl: `${packageJson.proxy}game/UnityWasmFile?gameId=${gameId}`,
   });
 
   useEffect(() => {
@@ -53,11 +60,10 @@ const GameView: React.FC = () => {
 
   unityContext.on("loaded", () => {
     setLoadingState({ ...loadingState, loaded: true });
+    if (isMobile) {
+      handle.enter();
+    }
   });
-
-  const handleFullscreenButtonClick = () => {
-    unityContext.setFullscreen(true);
-  };
 
   return (
     <MainLayout>
@@ -73,21 +79,36 @@ const GameView: React.FC = () => {
       >
         <Col span={24}>
           <Row>
-            <Unity
-              unityContext={unityContext}
-              style={{ width: "100%", height: "65vh" }}
-            />
+            {isMobileSafari ? (
+              <Unity
+                unityContext={unityContext}
+                style={
+                  handle.active
+                    ? unityContextFullScreenStyles
+                    : unityContextDefaultStyles
+                }
+              />
+            ) : (
+              <FullScreen handle={handle}>
+                <Unity
+                  unityContext={unityContext}
+                  style={
+                    handle.active
+                      ? unityContextFullScreenStyles
+                      : unityContextDefaultStyles
+                  }
+                />
+              </FullScreen>
+            )}
           </Row>
         </Col>
-        <Col span={24}>
-          <Button
-            onClick={() => handleFullscreenButtonClick()}
-            type="primary"
-            block
-          >
-            Pełny ekran
-          </Button>
-        </Col>
+        {!isMobileSafari && (
+          <Col span={24}>
+            <Button onClick={handle.enter} type="primary" block>
+              Pełny ekran
+            </Button>
+          </Col>
+        )}
       </Row>
     </MainLayout>
   );

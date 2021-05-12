@@ -24,7 +24,7 @@ const GamesList: React.FC = () => {
         <GamesListEmptyFeedback />
       )}
       {gamesState.promise === "fulfilled" && gamesState.games.length > 0 && (
-        <Row gutter={16}>
+        <Row gutter={[32, 32]}>
           {gamesState.games.map((g, i) => (
             <Col key={i} xs={24} xl={8}>
               <Link to={`game/${g.gameId}`}>

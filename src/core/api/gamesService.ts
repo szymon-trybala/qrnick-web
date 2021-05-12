@@ -18,7 +18,7 @@ const fetchGamesList = createAsyncThunk<
     rejectValue: GamesListRefreshError;
   }
 >("game/list", async (_, thunkApi) => {
-  const response = await fetch("http://localhost:5000/game/List", {
+  const response = await fetch("http://192.168.0.94:5000/game/List", {
     method: "GET",
     headers: {
       Accept: "application/json",
